@@ -57,36 +57,36 @@ function styleCat(feature) {
 
 }
 
-function styleLabor(feature) {
-    return {
-        fillColor: getColor(feature.properties[labor]),
-        weight: 1,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.5
-    };
 
-}
 
-function styleHousing(feature) {
-    return {
-        fillColor: getColor(feature.properties[housing]),
-        weight: 1,
-        opacity: 1,
-        color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.5
-    };
-
-}
 
 function onEachFeature(feature, layer)
 {
-	layer.bindPopup('<b align = "center">Forward Sortation Area: </b>' + feature.properties.CFSAUID + '<br><b>Number of Dogs: </b>' + feature.properties[dog] + '<br><b>Number of Cats: </b>' + feature.properties[cat])
+	layer.bindPopup(
+        '<b align = "center">Forward Sortation Area: </b>' + feature.properties.CFSAUID
+        + '<br><b>Number of Dogs: </b>' + feature.properties[dog]
+        + '<br><b>Number of Cats: </b>' + feature.properties[cat]
+        + '<canvas id="myChart"></canvas>')
+  
 	layer.on({
 				mouseover: function() {layer.setStyle({fillOpacity: 1}) },
-				mouseout: function() {layer.setStyle({fillOpacity: 0.5}) }
+				mouseout: function() {layer.setStyle({fillOpacity: 0.5}) },
+                click: function(){
+                    var ctx = document.getElementById("myChart");
+
+
+                    var myChart = new Chart(ctx,
+                            {
+                                type: "bar",
+                                data: {
+                                    labels: ['Dogs', 'Cats'],
+                                    datasets: [{
+                                        label: 'Cats and Dogs',
+                                        data: [feature.properties[dog], feature.properties[cat]]
+                                        }]
+                                    }
+                            });
+                }
 			})
 }
 
