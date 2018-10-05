@@ -16,14 +16,14 @@
 <script>
     var mymap = L.map('mapid').setView([43.7, -79.4], 11);
 
-    var json = uploadJson('petsbyfsa_toronto.geojson');
+    var json = uploadJson('dogscatstorontofsa.geojson');
 
     console.log(json.features);
     for (i=0; i < json.features.length; i++)
     {
-        console.log(json.features[i].properties["2013 licences sold by fsa (1)_DOG"])
-        json.features[i].properties["2013 licences sold by fsa (1)_DOG"] = json.features[i].properties["2013 licences sold by fsa (1)_DOG"].replace(",","");
-        console.log(json.features[i].properties["2013 licences sold by fsa (1)_DOG"])
+        console.log(json.features[i].properties["DOG"])
+        json.features[i].properties["DOG"] = json.features[i].properties["DOG"].replace(",","");
+        console.log(json.features[i].properties["DOG"])
     }
     var dogMap = L.geoJson(json, {style: styleDog, onEachFeature: onEachFeature}).addTo(mymap);
     var catMap = L.geoJson(json, {style: styleCat, onEachFeature: onEachFeature});
