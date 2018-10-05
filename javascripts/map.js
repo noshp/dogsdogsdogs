@@ -1,5 +1,5 @@
-var dog = "2013 licences sold by fsa (1)_DOG"
-var cat = "2013 licences sold by fsa (1)_CAT"
+var dog = "DOG"
+var cat = "CAT"
 var money = 'cwb_2011_1452011148713_eng (1)_Income / Revenu 2011'
 var labor = 'cwb_2011_1452011148713_eng (1)_Labour Force Activity / Activité sur le marché du travail 2011'
 
