@@ -1,89 +1,95 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
-    <script src="leaflet.ajax.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
-    <script src='javascripts/map.js'></script>
-    <script src='javascripts/chart.js'></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Toronto Dogs &amp; Cats Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="stylesheets/dashboard.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 </head>
-
 <body>
 
-<div id = "mapid" style = "height:100%; width:100%"></div>
+<!-- Header -->
+<header>
+    <h1>🐶 Toronto Licensed Dogs &amp; Cats 🐱</h1>
+    <p class="subtitle">Data from <a href="https://open.toronto.ca/dataset/licensed-dogs-and-cats/" target="_blank" rel="noopener">Toronto Open Data</a> — Licensed pets since 2023</p>
+</header>
 
-<script>
-    var mymap = L.map('mapid').setView([43.7, -79.4], 11);
+<!-- Summary Cards -->
+<section class="cards">
+    <div class="card card-dogs">
+        <div class="card-icon">🐕</div>
+        <div class="card-value" id="total-dogs">—</div>
+        <div class="card-label">Licensed Dogs</div>
+    </div>
+    <div class="card card-cats">
+        <div class="card-icon">🐈</div>
+        <div class="card-value" id="total-cats">—</div>
+        <div class="card-label">Licensed Cats</div>
+    </div>
+    <div class="card card-total">
+        <div class="card-icon">🏠</div>
+        <div class="card-value" id="total-pets">—</div>
+        <div class="card-label">Total Pets</div>
+    </div>
+    <div class="card card-fsa">
+        <div class="card-icon">📍</div>
+        <div class="card-value" id="fsa-count">—</div>
+        <div class="card-label">Postal Areas</div>
+    </div>
+</section>
 
-    var json = uploadJson('dogscatstorontofsa.geojson');
+<!-- Map -->
+<section class="panel">
+    <h2>Pet Density by Postal Area (FSA)</h2>
+    <div class="map-controls">
+        <button class="map-btn active" data-layer="dogs">Dogs</button>
+        <button class="map-btn" data-layer="cats">Cats</button>
+        <button class="map-btn" data-layer="total">Total</button>
+    </div>
+    <div id="map"></div>
+</section>
 
-    console.log(json.features);
-    for (i=0; i < json.features.length; i++)
-    {
-        console.log(json.features[i].properties["DOG"])
-        json.features[i].properties["DOG"] = json.features[i].properties["DOG"].replace(",","");
-        console.log(json.features[i].properties["DOG"])
-    }
-    var dogMap = L.geoJson(json, {style: styleDog, onEachFeature: onEachFeature}).addTo(mymap);
-    var catMap = L.geoJson(json, {style: styleCat, onEachFeature: onEachFeature});
+<!-- Charts Row 1: Names -->
+<section class="chart-row">
+    <div class="panel half">
+        <h2>Top 15 Dog Names</h2>
+        <canvas id="chart-dog-names"></canvas>
+    </div>
+    <div class="panel half">
+        <h2>Top 15 Cat Names</h2>
+        <canvas id="chart-cat-names"></canvas>
+    </div>
+</section>
 
-    L.tileLayer('https://api.tiles.mapbox.com/v4/mapbox.light/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFja2VuemllbiIsImEiOiJjaW1pbTZmMWwwMGU1dTFrcW0wenNiNGZ0In0.ys8ti05bu3iKf06cK9r82Q', {
-        attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
-        minZoom: 7,
-        id: 'mapbox.light',
-        accessToken: 'pk.eyJ1IjoibWFja2VuemllbiIsImEiOiJjaW1pbTZmMWwwMGU1dTFrcW0wenNiNGZ0In0.ys8ti05bu3iKf06cK9r82Q'
-    }).addTo(mymap);
+<!-- Charts Row 2: Breeds -->
+<section class="chart-row">
+    <div class="panel half">
+        <h2>Top 15 Dog Breeds</h2>
+        <canvas id="chart-dog-breeds"></canvas>
+    </div>
+    <div class="panel half">
+        <h2>Top 15 Cat Breeds</h2>
+        <canvas id="chart-cat-breeds"></canvas>
+    </div>
+</section>
 
+<!-- Charts Row 3: Trends -->
+<section class="chart-row">
+    <div class="panel full">
+        <h2>Licences by Year</h2>
+        <canvas id="chart-yearly"></canvas>
+    </div>
+</section>
 
+<!-- Footer -->
+<footer>
+    <p>Data: City of Toronto Open Data &mdash; <a href="https://open.toronto.ca/dataset/licensed-dogs-and-cats/" target="_blank" rel="noopener">Licensed Dogs &amp; Cats</a> &amp; <a href="https://open.toronto.ca/dataset/licensed-dog-and-cat-names/" target="_blank" rel="noopener">Licensed Dog &amp; Cat Names</a></p>
+    <p>Run <code>python fetch_data.py</code> to refresh data.</p>
+</footer>
 
-    var legend = L.control({position: 'topright'});
-
-    legend.onAdd = function(mymap)
-    {
-        var div = L.DomUtil.create('div', 'info legend');
-        div.innerHTML += 'Less<br><i style=" background-color:' + getColor(0) + '"></i>' +
-                '<br><br><i style="height:50px ;width:50px;border-color: black; border-width: 1px;border-style: solid; background-color:' + getColor(2000) + '"></i><br>More';
-        return div;
-    }
-
-    legend.addTo(mymap);
-
-    var csd =
-    {
-        "Dogs" : dogMap,
-        "Cats" : catMap
-    }
-
-    L.control.layers(csd).addTo(mymap);
-
-</script>
-
-<style>
-    .legend {
-        line-height: 18px;
-        color: #555;
-        background-color: white;
-        padding: 15px;
-        border-color: black;
-        border-width: 1px;
-        border-style: solid;
-    }
-    .legend i {
-
-        float: left;
-        margin-right: 8px;
-        opacity: 0.7;
-        height:50px ;
-        width:50px;
-        border-color: black;
-        border-width: 1px;
-        border-style: solid;
-    }
-
-</style>
-
-
-
+<script src="javascripts/dashboard.js"></script>
 </body>
 </html>
